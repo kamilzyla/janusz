@@ -45,10 +45,7 @@ case class Maze(name: String, fields: Array[Array[MazeField]]) {
 
 
   private def isWallBetween(firstField: MazeField, secondField: MazeField): Boolean = {
-    def dx = secondField.x - firstField.x
-    def dy = secondField.y - firstField.y
-
-    Direction(dx, dy) match {
+    Direction(firstField, secondField) match {
       case North() => firstField.walls contains NorthWall()
       case South() => firstField.walls contains SouthWall()
       case West() => firstField.walls contains WestWall()

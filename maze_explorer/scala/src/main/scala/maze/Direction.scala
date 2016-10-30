@@ -38,4 +38,10 @@ object Direction {
       case _ => throw new AssertionError(s"($dx, $dy) is not a valid direction")
     }
   }
+
+  def apply(firstField: MazeField, secondField: MazeField): Direction = {
+    val dx = secondField.x - firstField.x
+    val dy = secondField.y - firstField.y
+    Direction(dx, dy)
+  }
 }

@@ -19,20 +19,16 @@ class MazeReader(numRows: Int, numColumns: Int) {
 
   private val logger = LoggerFactory.getLogger("MazeReader")
 
-  def readFromFile(file: File): Option[Maze] = {
+  def readFromFile(file: File): Maze = {
     logger.debug("Read maze from file: " + file.getName)
     assert(file.exists())
     assert(file.isFile)
 
     val content = IOUtils.toByteArray(Source.fromFile(file).reader())
-    if (content.length == numRows * numColumns) {
-      val fields = readMazeFields(content)
-      Some(Maze(file.getName, fields))
-    }
-    else {
-      logger.warn(s"File '${file.getName}': invalid length: ${content.length}")
-      None
-    }
+    assert(content.length == numRows * numColumns)
+
+    val fields = readMazeFields(content)
+    Maze(file.getName, fields)
   }
 
   def readMazeFields(content: Array[Byte]): Array[Array[MazeField]] = {

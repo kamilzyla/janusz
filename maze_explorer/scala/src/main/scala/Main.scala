@@ -1,5 +1,6 @@
 import java.io.File
 
+import evaluation.LengthPlusTurns
 import maze.{Maze, MazeReader}
 import org.slf4j.LoggerFactory
 import strategy.Dfs
@@ -14,10 +15,13 @@ object Main {
     val mazes = readMazes()
 
     val strategy = new Dfs()
-    mazes.map(strategy.explore)
+    val evaluation = new LengthPlusTurns()
+
+    val paths = mazes.map(strategy.explore)
+    paths foreach { path => println(evaluation.evaluate(path)) }
   }
 
-  def readMazes(): Seq[Maze] = {
+  def readMazes(): Set[Maze] = {
     val mazesDir = new File(getClass.getResource("mazes").getPath)
     assert(mazesDir.exists())
     assert(mazesDir.isDirectory)
@@ -26,10 +30,9 @@ object Main {
     val mazes = mazesDir.listFiles()
         .filter(_.isFile())
         .map(mazeReader.readFromFile)
-        .filter(_.isDefined)
-        .map(_.get)
+        .toSet
 
-    logger.debug(s"Read ${mazes.length} mazes")
+    logger.info(s"Read ${mazes.size} mazes")
     mazes
   }
 }
