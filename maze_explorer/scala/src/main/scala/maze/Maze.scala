@@ -4,7 +4,7 @@ package maze
   * Created by zak on 10/27/16.
   */
 
-abstract class Wall
+sealed abstract class Wall
 final case class NorthWall() extends Wall
 final case class SouthWall() extends Wall
 final case class WestWall() extends Wall

@@ -3,7 +3,7 @@ package maze
 /**
   * Created by zak on 10/28/16.
   */
-abstract class Direction {
+sealed abstract class Direction {
   def dx: Int
   def dy: Int
 }

@@ -12,9 +12,9 @@ class Dfs extends ExplorationStrategy {
 
   private def dfs(maze: Maze, visited: Set[MazeField], currentField: MazeField): Seq[MazeField] = {
     val neighbours = maze.getNeighbours(currentField)
-    val neighboursPaths = visitNeighbours(maze, visited + currentField, neighbours)
+    val neighboursPaths = visitNeighbours(maze, visited + currentField, neighbours).filterNot(_.isEmpty)
     if (neighboursPaths.isEmpty) {
-      Seq()
+      Seq(currentField)
     } else {
       val connectedNeighboursPaths = neighboursPaths.reduce((s1, s2) => s1 ++ (currentField +: s2))
       currentField +: connectedNeighboursPaths :+ currentField
