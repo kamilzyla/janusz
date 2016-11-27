@@ -44,4 +44,6 @@ object Direction {
     val dy = secondField.y - firstField.y
     Direction(dx, dy)
   }
+
+  def getAll: Set[Direction] = Set(North(), South(), West(), East())
 }

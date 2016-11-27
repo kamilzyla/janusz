@@ -1,4 +1,6 @@
+import java.awt.image.BufferedImage
 import java.io.File
+import javax.imageio.ImageIO
 
 import evaluation.LengthPlusTurns
 import maze.{Maze, MazeReader}
@@ -13,12 +15,13 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val mazes = readMazes()
-
-    val strategy = new Dfs()
-    val evaluation = new LengthPlusTurns()
-
-    val paths = mazes.map(strategy.explore)
-    paths foreach { path => println(evaluation.evaluate(path)) }
+    println(mazes.filter(_.name == "map-y7.maz").head.generateHtmlToDisplay)
+//    mazes.head.show()
+//    val strategy = new Dfs()
+//    val evaluation = new LengthPlusTurns()
+//
+//    val paths = mazes map { maze => (strategy.explore(maze), maze) }
+//    paths foreach { case (path, maze) => println("%-40s %f".format(maze.name, evaluation.evaluate(path))) }
   }
 
   def readMazes(): Set[Maze] = {
