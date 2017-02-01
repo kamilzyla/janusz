@@ -1,7 +1,5 @@
 package maze
 
-import java.awt.{Color, Paint, Shape}
-import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
@@ -17,6 +15,11 @@ case class MazeWall(fields: Set[MazeField]) {
 
 object MazeWall {
   def apply(firstField: MazeField, secondField: MazeField): MazeWall = MazeWall(Set(firstField, secondField))
+
+  def apply(field: MazeField, direction: Direction): MazeWall = {
+    val neighbour = Maze.getNeighbour(field, direction)
+    MazeWall(field, neighbour)
+  }
 }
 
 case class MazeField(x: Int, y: Int)
@@ -27,16 +30,17 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
 
   val startField = MazeField(0, 0)
 
+  val centerFields = (Set(numRows / 2, (numRows + 1) / 2) zip Set(numColumns / 2, (numColumns + 1) / 2))
+      .map { case (row, col) => MazeField(row, col) }
+
   def getNeighbours(field: MazeField): Set[MazeField] = {
     Direction.getAll
-        .filter(isInside(field, _))
-        .map(direction => {
-          val newField = Maze.getNeighbour(field, direction)
-          if (isWallBetween(field, newField)) None else Some(newField)
-        })
-        .filter(_.isDefined)
-        .map(_.get)
+        .filter(!isWall(field, _))
+        .map(Maze.getNeighbour(field, _))
   }
+
+  def getWalls(field: MazeField): Set[MazeWall] =
+    getNeighbours(field).map(MazeWall(field, _))
 
   def generateHtmlToDisplay: String = {
     val file = new File("imgs/" + name + ".png")
@@ -54,10 +58,11 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
     0 <= newRow && newRow < numRows && 0 <= newColumn && newColumn < numColumns
   }
 
+  private def isWall(field: MazeField, direction: Direction): Boolean =
+    walls contains MazeWall(field, direction)
 
-  private def isWallBetween(firstField: MazeField, secondField: MazeField): Boolean = {
+  private def isWallBetween(firstField: MazeField, secondField: MazeField): Boolean =
     walls contains MazeWall(firstField, secondField)
-  }
 }
 
 object Maze {

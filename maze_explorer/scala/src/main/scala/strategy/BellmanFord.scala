@@ -1,6 +1,6 @@
 package strategy
 
-import maze.{Maze, MazeField, MazeWall}
+import maze.{Direction, Maze, MazeField, MazeWall}
 
 import scala.collection.mutable
 
@@ -13,34 +13,43 @@ object BellmanFord extends ExplorationStrategy {
   }
 
   private class BellmanFordRunner(maze: Maze) {
-
     def run(): Seq[MazeField] = {
       val state: State = new State(maze)
-      val fields: mutable.Queue[MazeField] = mutable.Queue.empty
+      val path: mutable.Queue[MazeField] = mutable.Queue.empty
       var currentField = maze.startField
 
-      while (shouldExplore()) {
+      while (shouldExplore(state)) {
         state.update(currentField)
         currentField = getNextFiled(currentField, state)
-        fields.enqueue(currentField)
+        path.enqueue(currentField)
       }
 
-      fields
+      path
     }
 
-    def getNextFiled(currentField: MazeField, state: State): MazeField = {
+    private def getNextFiled(currentField: MazeField, state: State): MazeField = {
       val estimatedCosts = runBellmanFord(maze, state, currentField)
       getBestNeighbour(maze, currentField, estimatedCosts)
     }
+
+    private def shouldExplore(state: State): Boolean = (state.getVisitedFields intersect maze.centerFields).isEmpty
   }
 }
 
 class State(maze: Maze) {
-  var seenWalls: Set[MazeWall]
+  private val seenWalls: mutable.Set[MazeWall] = mutable.Set.empty
+  private val seenGaps: mutable.Set[MazeWall] = mutable.Set.empty
+  private val visitedFields: mutable.Set[MazeField] = mutable.Set.empty
 
-  def update(field: MazeField): Unit
-}
+  def update(field: MazeField): Unit = {
+    val allPossibleWalls = Direction.getAll.map(MazeWall(field, _))
+    val newWalls = maze.getWalls(field)
+    val newGaps = allPossibleWalls diff newWalls
 
-object State {
-  val unknown: State = State(Map.empty)
+    seenWalls ++= newWalls
+    seenGaps ++= newGaps
+    visitedFields += field
+  }
+
+  def getVisitedFields = visitedFields
 }

@@ -28,7 +28,7 @@ class MazeReader(numRows: Int, numColumns: Int) {
     assert(content.length == numRows * numColumns)
 
     val walls = readMazeWalls(content)
-    Maze(file.getName, numRows, numColumns, walls)
+    Maze(file.getName, numRows = numRows, numColumns = numColumns, walls)
   }
 
   def readMazeWalls(content: Array[Byte]): Set[MazeWall] = {
@@ -61,10 +61,6 @@ class MazeReader(numRows: Int, numColumns: Int) {
 
     Direction.getAll
         .filter(isWallInDirection)
-        .map { direction =>
-          val neighbour = Maze.getNeighbour(field, direction)
-          MazeWall(field, neighbour)
-        }
-
+        .map { direction => MazeWall(field, direction) }
   }
 }
