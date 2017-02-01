@@ -30,7 +30,7 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
 
   val startField = MazeField(0, 0)
 
-  val centerFields = (Set(numRows / 2, (numRows + 1) / 2) zip Set(numColumns / 2, (numColumns + 1) / 2))
+  val centralFields = (Set(numRows / 2, (numRows + 1) / 2) zip Set(numColumns / 2, (numColumns + 1) / 2))
       .map { case (row, col) => MazeField(row, col) }
 
   def getNeighbours(field: MazeField): Set[MazeField] = {
