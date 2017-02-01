@@ -19,7 +19,6 @@ class Dfs extends ExplorationStrategy {
       val connectedNeighboursPaths = neighboursPaths.reduce((s1, s2) => s1 ++ (currentField +: s2))
       currentField +: connectedNeighboursPaths :+ currentField
     }
-
   }
 
   private def visitNeighbours(
@@ -38,5 +37,4 @@ class Dfs extends ExplorationStrategy {
       }
     }
   }
-
 }

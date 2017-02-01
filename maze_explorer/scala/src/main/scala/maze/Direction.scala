@@ -8,22 +8,22 @@ sealed abstract class Direction {
   def dy: Int
 }
 
-final case class North() extends Direction {
+case object North extends Direction {
   def dx = 0
   def dy = 1
 }
 
-final case class South() extends Direction {
+case object South extends Direction {
   def dx = 0
   def dy = -1
 }
 
-final case class West() extends Direction {
+case object West extends Direction {
   def dx = -1
   def dy = 0
 }
 
-final case class East() extends Direction {
+case object East extends Direction {
   def dx = 1
   def dy = 0
 }
@@ -31,10 +31,10 @@ final case class East() extends Direction {
 object Direction {
   def apply(dx: Int, dy: Int): Direction = {
     (dx, dy) match {
-      case (0, 1) => North()
-      case (0, -1) => South()
-      case (-1, 0) => West()
-      case (1, 0) => East()
+      case (0, 1) => North
+      case (0, -1) => South
+      case (-1, 0) => West
+      case (1, 0) => East
       case _ => throw new AssertionError(s"($dx, $dy) is not a valid direction")
     }
   }
@@ -45,5 +45,5 @@ object Direction {
     Direction(dx, dy)
   }
 
-  def getAll: Set[Direction] = Set(North(), South(), West(), East())
+  def getAll: Set[Direction] = Set(North, South, West, East)
 }

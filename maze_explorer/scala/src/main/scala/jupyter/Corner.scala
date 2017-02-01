@@ -31,7 +31,7 @@ case class BottomRight() extends Corner {
 }
 
 object Corner {
-  def getWallCorners(wall: Wall): (Corner, Corner) = {
+  def getWallCorners(wall: MazeWall): (Corner, Corner) = {
     wall match {
       case NorthWall() => (TopLeft(), TopRight())
       case SouthWall() => (BottomLeft(), BottomRight())

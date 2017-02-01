@@ -26,7 +26,7 @@ object MazeDrawer {
     field.walls foreach drawWall(graphics, field)
   }
 
-  private def drawWall(graphics: Graphics, field: MazeField)(wall: Wall) = {
+  private def drawWall(graphics: Graphics, field: MazeField)(wall: MazeWall) = {
     val (startCorner, endCorner) = Corner.getWallCorners(wall)
     val (x1, y1) = getPoint(field, startCorner)
     val (x2, y2) = getPoint(field, endCorner)

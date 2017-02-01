@@ -11,33 +11,27 @@ import jupyter.MazeDrawer
   * Created by zak on 10/27/16.
   */
 
-sealed abstract class Wall
+case class MazeWall(fields: Set[MazeField]) {
+  assert(fields.size == 2)
+}
 
-final case class NorthWall() extends Wall
+object MazeWall {
+  def apply(firstField: MazeField, secondField: MazeField): MazeWall = MazeWall(Set(firstField, secondField))
+}
 
-final case class SouthWall() extends Wall
+case class MazeField(x: Int, y: Int)
 
-final case class WestWall() extends Wall
-
-final case class EastWall() extends Wall
-
-case class MazeField(x: Int, y: Int, walls: Set[Wall])
-
-case class Maze(name: String, fields: Array[Array[MazeField]]) {
-  val startField = fields(0)(0)
-
-  val numRows = fields.length
+case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall]) {
   assert(numRows > 0)
+  assert(numColumns > 0)
 
-  val numColumns = fields.head.length
-
-  assert(areFieldsConsistent())
+  val startField = MazeField(0, 0)
 
   def getNeighbours(field: MazeField): Set[MazeField] = {
     Direction.getAll
         .filter(isInside(field, _))
         .map(direction => {
-          val newField = getNeighbour(field, direction)
+          val newField = Maze.getNeighbour(field, direction)
           if (isWallBetween(field, newField)) None else Some(newField)
         })
         .filter(_.isDefined)
@@ -54,11 +48,6 @@ case class Maze(name: String, fields: Array[Array[MazeField]]) {
     "<img src=\"" + file.getPath + "\" />"
   }
 
-  private def getNeighbour(field: MazeField, direction: Direction): MazeField = {
-    assert(isInside(field, direction))
-    fields(field.x + direction.dx)(field.y + direction.dy)
-  }
-
   private def isInside(field: MazeField, direction: Direction): Boolean = {
     val newRow = field.x + direction.dx
     val newColumn = field.y + direction.dy
@@ -67,26 +56,12 @@ case class Maze(name: String, fields: Array[Array[MazeField]]) {
 
 
   private def isWallBetween(firstField: MazeField, secondField: MazeField): Boolean = {
-    Direction(firstField, secondField) match {
-      case North() => firstField.walls contains NorthWall()
-      case South() => firstField.walls contains SouthWall()
-      case West() => firstField.walls contains WestWall()
-      case East() => firstField.walls contains EastWall()
-    }
-  }
-
-  private def areFieldsConsistent(): Boolean = {
-    fields.flatten forall isFieldConsistentWithNeighbours
-  }
-
-  private def isFieldConsistentWithNeighbours(field: MazeField): Boolean = {
-    Direction.getAll
-        .filter(isInside(field, _))
-        .forall(direction => {
-          val newField = getNeighbour(field, direction)
-          (isWallBetween(field, newField) && isWallBetween(newField, field)) ||
-              (!isWallBetween(field, newField) && !isWallBetween(newField, field))
-        })
+    walls contains MazeWall(firstField, secondField)
   }
 }
 
+object Maze {
+  def getNeighbour(field: MazeField, direction: Direction): MazeField = {
+    MazeField(field.x + direction.dx, field.y + direction.dy)
+  }
+}

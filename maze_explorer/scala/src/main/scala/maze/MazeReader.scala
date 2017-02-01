@@ -27,36 +27,44 @@ class MazeReader(numRows: Int, numColumns: Int) {
     val content = IOUtils.toByteArray(Source.fromFile(file).reader())
     assert(content.length == numRows * numColumns)
 
-    val fields = readMazeFields(content)
-    Maze(file.getName, fields)
+    val walls = readMazeWalls(content)
+    Maze(file.getName, numRows, numColumns, walls)
   }
 
-  def readMazeFields(content: Array[Byte]): Array[Array[MazeField]] = {
-    val fields = Array.ofDim[MazeField](numRows, numColumns)
-    for (y <- 0 until numRows; x <- 0 until numColumns) {
-      fields(x)(y) = readField(content, x, y)
-    }
-    fields
+  def readMazeWalls(content: Array[Byte]): Set[MazeWall] = {
+    (0 until numRows).zip(0 until numColumns)
+        .flatMap({
+          point => readFieldWalls(content, point._1, point._2)
+        })
+        .toSet
   }
 
-  private def readField(content: Array[Byte], x: Int, y: Int): MazeField = {
+  private def readFieldWalls(content: Array[Byte], x: Int, y: Int): Set[MazeWall] = {
     val fieldByte = content(x * numRows + y)
-    MazeField(x, y, fieldByteToSetOfWalls(fieldByte))
+    fieldByteToSetOfWalls(MazeField(x, y), fieldByte)
   }
 
-  private def fieldByteToSetOfWalls(fieldByte: Byte): Set[Wall] = {
+  private def fieldByteToSetOfWalls(field: MazeField, fieldByte: Byte): Set[MazeWall] = {
     val allWallBytes = NorthByte | EastByte | SouthByte | WestByte
     val hasOnlyWallBytesSet = (fieldByte | allWallBytes) == allWallBytes
     assert(hasOnlyWallBytesSet)
 
-    def maybeWall(wallByte: Byte, wall: Wall): Option[Wall] =
-        if ((fieldByte & wallByte) == wallByte) Some(wall) else None
+    def isWallInDirection(direction: Direction): Boolean = {
+      val directionByte = direction match {
+        case North => NorthByte
+        case South => SouthByte
+        case West => WestByte
+        case East => EastByte
+      }
+      (fieldByte & directionByte) == directionByte
+    }
 
-    Set(
-      maybeWall(NorthByte, NorthWall()),
-      maybeWall(SouthByte, SouthWall()),
-      maybeWall(WestByte, WestWall()),
-      maybeWall(EastByte, EastWall())
-    ).filter(_.isDefined).map(_.get)
+    Direction.getAll
+        .filter(isWallInDirection)
+        .map { direction =>
+          val neighbour = Maze.getNeighbour(field, direction)
+          MazeWall(field, neighbour)
+        }
+
   }
 }
