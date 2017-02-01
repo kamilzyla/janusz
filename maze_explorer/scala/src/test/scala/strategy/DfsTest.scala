@@ -16,13 +16,12 @@ class DfsTest extends FlatSpec with Matchers {
   private def areNeighbours(a: MazeField, b: MazeField): Boolean =
     SampleMaze.maze.getNeighbours(a) contains b
 
-  it should "start and end in field (0, 0)" in {
+  it should "start and in field (0, 0)" in {
     path.head shouldBe SampleMaze.maze.startField
-    path.last shouldBe SampleMaze.maze.startField
   }
 
-  it should "visit each maze field" in {
-    path.toSet shouldBe SampleMaze.maze.fields.flatten.toSet
+  it should "visit central field" in {
+    assert((path.toSet diff SampleMaze.maze.centralFields).nonEmpty)
   }
 
   it should "construct a path of neighbouring fields" in {

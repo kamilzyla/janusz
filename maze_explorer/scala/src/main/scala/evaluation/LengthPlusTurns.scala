@@ -11,7 +11,7 @@ class LengthPlusTurns extends Evaluation {
 
   private def numTurns(path: Seq[MazeField]): Int = {
     val directions = (0 until path.length - 1) map { idx => Direction(path(idx), path(idx + 1)) }
-    numTurns(directions, North())
+    numTurns(directions, North)
   }
 
   private def numTurns(directions: Seq[Direction], currentDirection: Direction): Int = {

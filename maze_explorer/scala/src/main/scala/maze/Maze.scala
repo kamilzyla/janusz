@@ -14,7 +14,8 @@ case class MazeWall(fields: Set[MazeField]) {
 }
 
 object MazeWall {
-  def apply(firstField: MazeField, secondField: MazeField): MazeWall = MazeWall(Set(firstField, secondField))
+  def apply(firstField: MazeField, secondField: MazeField): MazeWall =
+    MazeWall(Set(firstField, secondField))
 
   def apply(field: MazeField, direction: Direction): MazeWall = {
     val neighbour = Maze.getNeighbour(field, direction)
@@ -30,8 +31,13 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
 
   val startField = MazeField(0, 0)
 
-  val centralFields = (Set(numRows / 2, (numRows + 1) / 2) zip Set(numColumns / 2, (numColumns + 1) / 2))
-      .map { case (row, col) => MazeField(row, col) }
+  def centralFields: Set[MazeField] = {
+    def getCentral(x: Int) = Set(x / 2, (x + 1) / 2)
+    getCentral(numRows) zip getCentral(numColumns) map {
+      case (row, col) => MazeField(row, col)
+    }
+  }
+
 
   def getNeighbours(field: MazeField): Set[MazeField] = {
     Direction.getAll
@@ -52,17 +58,8 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
     "<img src=\"" + file.getPath + "\" />"
   }
 
-  private def isInside(field: MazeField, direction: Direction): Boolean = {
-    val newRow = field.x + direction.dx
-    val newColumn = field.y + direction.dy
-    0 <= newRow && newRow < numRows && 0 <= newColumn && newColumn < numColumns
-  }
-
   private def isWall(field: MazeField, direction: Direction): Boolean =
     walls contains MazeWall(field, direction)
-
-  private def isWallBetween(firstField: MazeField, secondField: MazeField): Boolean =
-    walls contains MazeWall(firstField, secondField)
 }
 
 object Maze {

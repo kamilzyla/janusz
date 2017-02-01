@@ -5,8 +5,8 @@ import maze.{Maze, MazeField}
 /**
   * Created by zak on 10/28/16.
   */
-class Dfs extends ExplorationStrategy {
-  override def explore(maze: Maze): Seq[MazeField] = {
+class Dfs {
+  def explore(maze: Maze): Seq[MazeField] = {
     dfs(maze, Set.empty, maze.startField)
   }
 

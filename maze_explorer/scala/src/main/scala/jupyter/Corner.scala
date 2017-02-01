@@ -10,33 +10,34 @@ sealed abstract class Corner {
   def y: Int
 }
 
-case class TopLeft() extends Corner {
+case object TopLeft extends Corner {
   def x = 0
   def y = 1
 }
 
-case class BottomLeft() extends Corner {
+case object BottomLeft extends Corner {
   def x = 0
   def y = 0
 }
 
-case class TopRight() extends Corner {
+case object TopRight extends Corner {
   def x = 1
   def y = 1
 }
 
-case class BottomRight() extends Corner {
+case object BottomRight extends Corner {
   def x = 1
   def y = 0
 }
 
 object Corner {
   def getWallCorners(wall: MazeWall): (Corner, Corner) = {
-    wall match {
-      case NorthWall() => (TopLeft(), TopRight())
-      case SouthWall() => (BottomLeft(), BottomRight())
-      case WestWall() => (BottomLeft(), TopLeft())
-      case EastWall() => (BottomRight(), TopRight())
+    val fieldsSeq = wall.fields.toSeq
+    Direction(fieldsSeq.head, fieldsSeq.last) match {
+      case North => (TopLeft, TopRight)
+      case South => (BottomLeft, BottomRight)
+      case West => (BottomLeft, TopLeft)
+      case East => (BottomRight, TopRight)
     }
   }
 }
