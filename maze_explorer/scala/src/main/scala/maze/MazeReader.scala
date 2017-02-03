@@ -32,11 +32,9 @@ class MazeReader(numRows: Int, numColumns: Int) {
   }
 
   def readMazeWalls(content: Array[Byte]): Set[MazeWall] = {
-    (0 until numRows).zip(0 until numColumns)
-        .flatMap({
-          point => readFieldWalls(content, point._1, point._2)
-        })
-        .toSet
+    val mazeWallsSeq = for (x <- 0 until numRows; y <- 0 until numColumns)
+      yield readFieldWalls(content, x, y)
+    mazeWallsSeq.flatten.toSet
   }
 
   private def readFieldWalls(content: Array[Byte], x: Int, y: Int): Set[MazeWall] = {

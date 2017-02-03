@@ -35,6 +35,8 @@ class ExplorationState(maze: Maze) {
   def getVisitedFields = visitedFields
 
   def centralFields = maze.centralFields
+
+  def startField = maze.startField
 }
 
 abstract sealed class WallKnowledge

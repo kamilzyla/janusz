@@ -23,7 +23,7 @@ object SampleMaze {
   private val S: Byte = 4
   private val W: Byte = 8
 
-  private val fields = Array(
+  val fieldsBytes = Array(
     S|W,    W|E,    W,      W,    W|N,
     S|N,    S|W,    E|N,    S|N,  S|N,
     S|N,    S,      W|N|E,  S|E,  N,
@@ -36,6 +36,6 @@ object SampleMaze {
     name = "Sample maze",
     numRows = numRows,
     numColumns = numColumns,
-    walls = mazeReader.readMazeWalls(fields)
+    walls = mazeReader.readMazeWalls(fieldsBytes)
   )
 }

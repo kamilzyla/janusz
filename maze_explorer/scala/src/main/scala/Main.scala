@@ -5,7 +5,7 @@ import javax.imageio.ImageIO
 import evaluation.LengthPlusTurns
 import maze.{Maze, MazeReader}
 import org.slf4j.LoggerFactory
-import strategy.Dfs
+import strategy.{Allowed, BellmanFord, Dfs, ExplorationStrategy}
 
 /**
   * Created by zak on 10/27/16.
@@ -15,13 +15,22 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val mazes = readMazes()
-    println(mazes.filter(_.name == "map-y7.maz").head.generateHtmlToDisplay)
-//    mazes.head.show()
-//    val strategy = new Dfs()
-//    val evaluation = new LengthPlusTurns()
-//
-//    val paths = mazes map { maze => (strategy.explore(maze), maze) }
-//    paths foreach { case (path, maze) => println("%-40s %f".format(maze.name, evaluation.evaluate(path))) }
+    mazes filter sanityCheck
+    //    val strategy = new Dfs()
+    val strategy = new ExplorationStrategy(
+      getNextField = new BellmanFord(
+        transitionCostWhenNoWall = 1d,
+        transitionsWhenUnknownWall = Allowed(cost = 1.5d)
+      ).getNextFiled
+    )
+    val evaluation = new LengthPlusTurns()
+
+    val paths = (mazes map { maze => maze -> strategy.explore(maze) }).toMap
+    val evaluations = paths mapValues evaluation.evaluate
+    evaluations foreach { case (maze, value) => println("%-40s %f".format(maze.name, value)) }
+
+    val avg = evaluations.values.sum / evaluations.size
+    println(s"Avg: $avg")
   }
 
   def readMazes(): Set[Maze] = {
@@ -38,4 +47,6 @@ object Main {
     logger.info(s"Read ${mazes.size} mazes")
     mazes
   }
+
+  def sanityCheck = ???
 }

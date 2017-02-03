@@ -33,11 +33,9 @@ case class Maze(name: String, numRows: Int, numColumns: Int, walls: Set[MazeWall
 
   def centralFields: Set[MazeField] = {
     def getCentral(x: Int) = Set(x / 2, (x + 1) / 2)
-    getCentral(numRows) zip getCentral(numColumns) map {
-      case (row, col) => MazeField(row, col)
-    }
+    for (x <- getCentral(numRows); y <- getCentral(numColumns))
+      yield MazeField(x, y)
   }
-
 
   def getNeighbours(field: MazeField): Set[MazeField] = {
     Direction.getAll

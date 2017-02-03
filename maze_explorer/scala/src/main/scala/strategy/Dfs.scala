@@ -1,16 +1,20 @@
 package strategy
 
 import maze.{Maze, MazeField}
+import org.slf4j.LoggerFactory
 
 /**
   * Created by zak on 10/28/16.
   */
 class Dfs {
+  val logger = LoggerFactory.getLogger(this.getClass)
+
   def explore(maze: Maze): Seq[MazeField] = {
     dfs(maze, Set.empty, maze.startField)
   }
 
   private def dfs(maze: Maze, visited: Set[MazeField], currentField: MazeField): Seq[MazeField] = {
+    logger.debug(s"Dfs: $currentField")
     val neighbours = maze.getNeighbours(currentField)
     val neighboursPaths = visitNeighbours(maze, visited + currentField, neighbours).filterNot(_.isEmpty)
     if (neighboursPaths.isEmpty) {
