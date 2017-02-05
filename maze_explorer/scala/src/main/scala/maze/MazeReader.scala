@@ -28,11 +28,12 @@ class MazeReader(numRows: Int, numColumns: Int) {
     assert(content.length == numRows * numColumns)
 
     val walls = readMazeWalls(content)
+    assert(boundedFromEverySite(walls))
     Maze(file.getName, numRows = numRows, numColumns = numColumns, walls)
   }
 
   def readMazeWalls(content: Array[Byte]): Set[MazeWall] = {
-    val mazeWallsSeq = for (x <- 0 until numRows; y <- 0 until numColumns)
+    val mazeWallsSeq = for (x <- 0 until numColumns; y <- 0 until numRows)
       yield readFieldWalls(content, x, y)
     mazeWallsSeq.flatten.toSet
   }
@@ -60,5 +61,13 @@ class MazeReader(numRows: Int, numColumns: Int) {
     Direction.getAll
         .filter(isWallInDirection)
         .map { direction => MazeWall(field, direction) }
+  }
+
+  private def boundedFromEverySite(walls: Set[MazeWall]): Boolean = {
+    val boundedFromWest = (0 until numRows) forall (y => walls contains MazeWall(MazeField(0, y), West))
+    val boundedFromEast = (0 until numRows) forall (y => walls contains MazeWall(MazeField(numColumns - 1, y), East))
+    val boundedFromSouth = (0 until numColumns) forall (x => walls contains MazeWall(MazeField(x, 0), South))
+    val boundedFromNorth = (0 until numColumns) forall (x => walls contains MazeWall(MazeField(x, numRows - 1), North))
+    boundedFromWest && boundedFromEast && boundedFromSouth && boundedFromNorth
   }
 }

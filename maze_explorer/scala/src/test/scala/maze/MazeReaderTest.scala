@@ -21,5 +21,10 @@ class MazeReaderTest extends FlatSpec with Matchers {
     assert(walls contains MazeWall(MazeField(0, 4), West))
     assert(!(walls contains MazeWall(MazeField(0, 4), South)))
     assert(!(walls contains MazeWall(MazeField(0, 4), East)))
+
+    assert(walls contains MazeWall(MazeField(2, 2), North))
+    assert(walls contains MazeWall(MazeField(2, 2), West))
+    assert(walls contains MazeWall(MazeField(2, 2), East))
+    assert(!(walls contains MazeWall(MazeField(2, 2), South)))
   }
 }

@@ -33,6 +33,7 @@ class BellmanFord(
       val FieldWithCost(currentField, cost) = queue.dequeue()
       if (!(costs.keySet contains currentField)) {
         costs.put(currentField, cost)
+        logger.debug(s"BellmanFord $currentField -> $cost")
         val transitionCosts = getTransitionCosts(state, currentField)
         val newCosts = transitionCosts
             .filterNot({ case (neighbour, _) => costs.keySet contains neighbour })
@@ -46,7 +47,7 @@ class BellmanFord(
   }
 
   def getTransitionCosts(state: ExplorationState, currentField: MazeField): Set[(MazeField, Double)] = {
-    val allPossibleNeighbours = Direction.getAll.map(Maze.getNeighbour(currentField, _))
+    val allPossibleNeighbours = Direction.getAll.map(Maze.getPossibleNeighbour(currentField, _)).filter(state.isInside)
     allPossibleNeighbours.map(neighbour => state.getWallKnowledge(currentField, neighbour) match {
       case Present => None
       case Absent => Some((neighbour, transitionCostWhenNoWall))

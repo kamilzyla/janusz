@@ -18,19 +18,19 @@ object MazeDrawer {
 
     graphics.setPaint(Color.BLACK)
     maze.walls foreach {
-      drawWall(graphics, _)
+      drawWall(maze, graphics, _)
     }
 
     img
   }
 
-  private def drawWall(graphics: Graphics, wall: MazeWall) = {
+  private def drawWall(maze: Maze, graphics: Graphics, wall: MazeWall) = {
     val (startCorner, endCorner) = Corner.getWallCorners(wall)
-    val (x1, y1) = getPoint(wall.fields.head, startCorner)
-    val (x2, y2) = getPoint(wall.fields.head, endCorner)
+    val (x1, y1) = getPoint(maze, wall.fields.head, startCorner)
+    val (x2, y2) = getPoint(maze, wall.fields.head, endCorner)
     graphics.drawLine(x1, y1, x2, y2)
   }
 
-  private def getPoint(field: MazeField, corner: Corner): (Int, Int) =
-    (scale * (field.x + corner.x), scale * (field.y + corner.y))
+  private def getPoint(maze: Maze, field: MazeField, corner: Corner): (Int, Int) =
+    (scale * (field.x + corner.x), scale * (maze.numRows - (field.y + corner.y)))
 }

@@ -37,6 +37,8 @@ class ExplorationState(maze: Maze) {
   def centralFields = maze.centralFields
 
   def startField = maze.startField
+
+  def isInside(field: MazeField) = maze.isInside(field)
 }
 
 abstract sealed class WallKnowledge

@@ -22,7 +22,10 @@ class ExplorationStrategy(getNextField: (ExplorationState, MazeField) => MazeFie
       logger.debug(s"CurrentField: $currentField")
       state.update(currentField)
       val nextField = getNextField(state, currentField)
-      assert(maze.getNeighbours(currentField) contains nextField)
+      assert(
+        maze.getNeighbours(currentField) contains nextField,
+        s"Invalid move from: $currentField to: $nextField in maze: ${maze.name}"
+      )
       path.enqueue(nextField)
       currentField = nextField
     }

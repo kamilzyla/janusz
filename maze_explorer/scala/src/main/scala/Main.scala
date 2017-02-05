@@ -1,6 +1,4 @@
-import java.awt.image.BufferedImage
 import java.io.File
-import javax.imageio.ImageIO
 
 import evaluation.LengthPlusTurns
 import maze.{Maze, MazeReader}
@@ -15,7 +13,6 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val mazes = readMazes()
-    mazes filter sanityCheck
     //    val strategy = new Dfs()
     val strategy = new ExplorationStrategy(
       getNextField = new BellmanFord(
@@ -25,10 +22,12 @@ object Main {
     )
     val evaluation = new LengthPlusTurns()
 
+    // TODO (zak): Add paths sanity checks
     val paths = (mazes map { maze => maze -> strategy.explore(maze) }).toMap
     val evaluations = paths mapValues evaluation.evaluate
     evaluations foreach { case (maze, value) => println("%-40s %f".format(maze.name, value)) }
 
+    // TODO (zak): Print paths stats
     val avg = evaluations.values.sum / evaluations.size
     println(s"Avg: $avg")
   }
@@ -47,6 +46,4 @@ object Main {
     logger.info(s"Read ${mazes.size} mazes")
     mazes
   }
-
-  def sanityCheck = ???
 }
