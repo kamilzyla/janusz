@@ -18,10 +18,10 @@ object SampleMaze {
   val numRows = 5
   val numColumns = 5
 
-  private val N: Byte = 1
-  private val E: Byte = 2
-  private val S: Byte = 4
-  private val W: Byte = 8
+  private val N: Int = 1
+  private val E: Int = 2
+  private val S: Int = 4
+  private val W: Int = 8
 
   val fieldsBytes = Array(
     S|W,    W|E,    W,      W,    W|N,

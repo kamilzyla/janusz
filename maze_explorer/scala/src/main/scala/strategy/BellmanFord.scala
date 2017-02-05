@@ -52,7 +52,7 @@ class BellmanFord(
       case Present => None
       case Absent => Some((neighbour, transitionCostWhenNoWall))
       case Unknown => transitionsWhenUnknownWall match {
-        case Allowed(cost) => Some(neighbour, cost)
+        case Allowed(cost) => Some((neighbour, cost))
         case Forbidden => None
       }
     }).filter(_.isDefined).map(_.get)

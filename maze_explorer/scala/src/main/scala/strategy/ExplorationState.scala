@@ -20,6 +20,7 @@ class ExplorationState(maze: Maze) {
     seenWalls ++= newWalls
     seenGaps ++= newGaps
     visitedFields += field
+    ()
   }
 
   def getWallKnowledge(firstField: MazeField, secondField:MazeField): WallKnowledge = {

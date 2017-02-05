@@ -5,7 +5,6 @@ import java.io.File
 import org.apache.commons.io.IOUtils
 import org.slf4j.LoggerFactory
 
-import scala.collection.mutable
 import scala.io.Source
 
 /**

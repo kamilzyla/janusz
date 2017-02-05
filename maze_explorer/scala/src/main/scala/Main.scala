@@ -3,7 +3,7 @@ import java.io.File
 import evaluation.LengthPlusTurns
 import maze.{Maze, MazeReader}
 import org.slf4j.LoggerFactory
-import strategy.{Allowed, BellmanFord, Dfs, ExplorationStrategy}
+import strategy.{Allowed, BellmanFord, ExplorationStrategy}
 
 /**
   * Created by zak on 10/27/16.
