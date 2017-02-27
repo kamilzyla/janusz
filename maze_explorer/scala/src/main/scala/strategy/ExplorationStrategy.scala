@@ -8,7 +8,7 @@ import scala.collection.mutable
 /**
   * Created by zak on 10/28/16.
   */
-class ExplorationStrategy(getNextField: (ExplorationState, MazeField) => MazeField) {
+class ExplorationStrategy(nextFieldProvider: NextFieldProvider) {
   val logger = LoggerFactory.getLogger(this.getClass)
 
   def explore(maze: Maze): Seq[MazeField] = {
@@ -21,7 +21,7 @@ class ExplorationStrategy(getNextField: (ExplorationState, MazeField) => MazeFie
     while (shouldExplore(state)) {
       logger.debug(s"CurrentField: $currentField")
       state.update(currentField)
-      val nextField = getNextField(state, currentField)
+      val nextField = nextFieldProvider.getNextField(state, currentField)
       assert(
         maze.getNeighbours(currentField) contains nextField,
         s"Invalid move from: $currentField to: $nextField in maze: ${maze.name}"
@@ -33,17 +33,6 @@ class ExplorationStrategy(getNextField: (ExplorationState, MazeField) => MazeFie
     path
   }
 
-  def shouldExplore(state: ExplorationState): Boolean = {
-    val bestPossibleCosts = new BellmanFord(
-      transitionCostWhenNoWall = 1d,
-      transitionsWhenUnknownWall = Allowed(cost = 1d)
-    ).run(state)
-    val bestKnownCosts = new BellmanFord(
-      transitionCostWhenNoWall = 1d,
-      transitionsWhenUnknownWall = Forbidden
-    ).run(state)
-
-    val pathToCentralFieldIsUnknown = !(bestKnownCosts.keySet contains state.startField)
-    pathToCentralFieldIsUnknown || (bestPossibleCosts(state.startField).totalCost < bestKnownCosts(state.startField).totalCost)
-  }
+  def shouldExplore(state: ExplorationState): Boolean =
+    !BellmanFord.isBestPathFromFieldKnown(state, state.startField)
 }

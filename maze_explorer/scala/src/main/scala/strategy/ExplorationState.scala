@@ -33,6 +33,11 @@ class ExplorationState(maze: Maze) {
     }
   }
 
+  def getNeighbours(field: MazeField): Set[MazeField] =
+    Direction.getAll
+      .map(direction => Maze.getPossibleNeighbour(field, direction))
+      .filter(possibleNeighbour => getWallKnowledge(field, possibleNeighbour) == Absent)
+
   def getVisitedFields = visitedFields
 
   def centralFields = maze.centralFields

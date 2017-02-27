@@ -12,18 +12,18 @@ object Main {
   val logger = LoggerFactory.getLogger(Main.getClass)
 
   def main(args: Array[String]): Unit = {
-    val mazes = readMazes()
+    val mazes = if (args.isEmpty) readAllMazes() else readMazes(args.toSet)
     //    val strategy = new Dfs()
-    val strategy = new ExplorationStrategy(
-      getNextField = new BellmanFord(
+    def getFreshStrategy = new ExplorationStrategy(
+      new BellmanFord(
         transitionCostWhenNoWall = 1d,
         transitionsWhenUnknownWall = Allowed(cost = 1.5d)
-      ).getNextFiled
+      )
     )
     val evaluation = new LengthPlusTurns()
 
     // TODO (zak): Add paths sanity checks
-    val paths = (mazes map { maze => maze -> strategy.explore(maze) }).toMap
+    val paths = (mazes map { maze => maze -> getFreshStrategy.explore(maze) }).toMap
     val evaluations = paths mapValues evaluation.evaluate
     evaluations foreach { case (maze, value) => println("%-40s %f".format(maze.name, value)) }
 
@@ -32,18 +32,27 @@ object Main {
     println(s"Avg: $avg")
   }
 
-  def readMazes(): Set[Maze] = {
-    val mazesDir = new File(getClass.getResource("mazes").getPath)
-    assert(mazesDir.exists())
-    assert(mazesDir.isDirectory)
+  def readAllMazes(): Set[Maze] = {
+    val mazesToRead = getAllMazesFiles.map(_.getName)
+    readMazes(mazesToRead)
+  }
 
+  def readMazes(mazesToRead: Set[String]): Set[Maze] = {
     val mazeReader = new MazeReader(numRows = 16, numColumns = 16)
-    val mazes = mazesDir.listFiles()
-        .filter(_.isFile())
+    val mazes = getAllMazesFiles
+        .filter(file => mazesToRead contains file.getName)
         .map(mazeReader.readFromFile)
-        .toSet
 
     logger.info(s"Read ${mazes.size} mazes")
     mazes
+  }
+
+  private def getAllMazesFiles: Set[File] = {
+    val mazesDir = new File(getClass.getResource("mazes").getPath)
+    assert(mazesDir.exists())
+    assert(mazesDir.isDirectory)
+    mazesDir.listFiles()
+      .filter(_.isFile())
+      .toSet
   }
 }
